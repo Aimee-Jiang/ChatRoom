@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Singleton.h"
-static NSString *domain = @"teacher.local";
+static NSString *domain = @"jww.local";
 @interface WCUserInfo : NSObject
 
 singleton_interface(WCUserInfo);
