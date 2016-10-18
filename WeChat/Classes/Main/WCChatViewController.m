@@ -41,12 +41,10 @@
     
     [self setupView];
     
-    // 监听键盘
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
-    // 加载数据
     [self loadMsgs];
     
 }
@@ -77,21 +75,19 @@
 
 
 -(void)setupView{
-    // 代码方式实现自动布局 VFL
-    // 创建一个Tableview;
+  
     UITableView *tableView = [[UITableView alloc] init];
     //tableView.backgroundColor = [UIColor redColor];
     tableView.delegate = self;
     tableView.dataSource = self;
-#warning 代码实现自动布局，要设置下面的属性为NO
+
     tableView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:tableView];
     self.tableView = tableView;
     
-    // 创建输入框View
     WCInputView *inputView = [WCInputView inputView];
     inputView.translatesAutoresizingMaskIntoConstraints = NO;
-    // 设置TextView代理
+    
     inputView.textView.delegate = self;
     
     // 添加按钮事件
@@ -102,19 +98,16 @@
    NSDictionary *views = @{@"tableview":tableView,
                             @"inputView":inputView};
     
-    // tabview水平方向的约束
     NSArray *tabviewHConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[tableview]-0-|" options:0 metrics:nil views:views];
     [self.view addConstraints:tabviewHConstraints];
     
-    // inputView水平方向的约束
     NSArray *inputViewHConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[inputView]-0-|" options:0 metrics:nil views:views];
     [self.view addConstraints:inputViewHConstraints];
     
     
-    // 垂直方向的约束
     NSArray *vContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-64-[tableview]-0-[inputView(50)]-0-|" options:0 metrics:nil views:views];
     [self.view addConstraints:vContraints];
-    // 添加inputView的高度约束
+  
     self.inputViewHeightConstraint = vContraints[2];
     self.inputViewBottomConstraint = [vContraints lastObject];
     NSLog(@"%@",vContraints);
@@ -123,11 +116,8 @@
 #pragma mark 加载XMPPMessageArchiving数据库的数据显示在表格
 -(void)loadMsgs{
 
-    // 上下文
     NSManagedObjectContext *context = [WCXMPPTool sharedWCXMPPTool].msgStorage.mainThreadManagedObjectContext;
-    // 请求对象
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"XMPPMessageArchiving_Message_CoreDataObject"];
-    
     
     // 过滤、排序
     NSPredicate *pre = [NSPredicate predicateWithFormat:@"streamBareJidStr = %@ AND bareJidStr = %@",[WCUserInfo sharedWCUserInfo].jid,self.friendJid.bare];
@@ -138,7 +128,6 @@
     NSSortDescriptor *timeSort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES];
     request.sortDescriptors = @[timeSort];
    
-    // 查询
     _resultsContr = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:context sectionNameKeyPath:nil cacheName:nil];
     
     NSError *err = nil;
